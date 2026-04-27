@@ -1,3 +1,8 @@
+---
+name: context-save
+description: Manual and checkpoint context saving for agents
+---
+
 # Skill: context-save
 
 Manual and checkpoint context saving for agents.

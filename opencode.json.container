@@ -1,9 +1,10 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "model": "opencode/minimax-m2.5-free",
   "instructions": ["/workspace/.context/memory.md"],
   "plugin": ["superpowers@git+https://github.com/obra/superpowers.git"],
   "skills": {
-    "context-save": "/home/appuser/skills/context-save"
+    "paths": ["/home/appuser/.config/opencode/skills"]
   },
   "mcp": {
     "context7": {
@@ -16,6 +17,12 @@
       "*": "allow",
       ".env": "deny",
       ".env.*": "deny"
+    },
+    "bash": {
+      "*": "allow"
+    },
+    "skill": {
+      "*": "allow"
     },
     "edit": {
       "*/.config/opencode/*": "deny"
