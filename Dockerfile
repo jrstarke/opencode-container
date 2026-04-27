@@ -1,0 +1,34 @@
+FROM debian:stable-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  ca-certificates curl git iptables ipset dnsutils coreutils procps jq bash gosu docker-cli iproute2 \
+  && update-ca-certificates \
+  && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN curl -L https://github.com/anomalyco/opencode/releases/download/v1.14.25/opencode-linux-arm64.tar.gz -o /tmp/opencode.tar.gz && \
+  tar -xzf /tmp/opencode.tar.gz -C /usr/local/bin opencode && \
+  chmod +x /usr/local/bin/opencode && \
+  rm /tmp/opencode.tar.gz
+
+RUN mkdir -p /home/appuser && useradd -m -s /bin/bash appuser || true
+RUN groupadd -g 991 docker || true
+RUN usermod -aG docker appuser || true
+RUN curl -L https://github.com/asdf-vm/asdf/releases/download/v0.19.0/asdf-v0.19.0-linux-arm64.tar.gz -o /tmp/asdf.tar.gz && \
+  tar -xzf /tmp/asdf.tar.gz -C /tmp
+RUN mkdir -p /home/appuser/asdf && mv /tmp/asdf/bin/* /home/appuser/asdf/ && mv /tmp/asdf/completions/* /home/appuser/asdf/completions/ 2>/dev/null || true
+RUN rm -rf /tmp/asdf /tmp/asdf.tar.gz && chown -R appuser:appuser /home/appuser
+RUN printf 'export ASDF_DIR=/home/appuser/asdf\nsource $ASDF_DIR/asdf.sh\n' >> /home/appuser/.bashrc
+
+RUN mkdir /commandhistory && touch /commandhistory/.bash_history && chown -R appuser /commandhistory || true
+
+ENV HOST_WORKSPACE=/workspace
+
+COPY init-firewall.sh /usr/local/bin/init-firewall.sh
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY AGENTS.md.container /home/appuser/.config/opencode/AGENTS.md
+COPY opencode.json.container /home/appuser/.config/opencode/opencode.json
+RUN chmod 755 /usr/local/bin/init-firewall.sh /usr/local/bin/entrypoint.sh
+
+RUN mkdir -p /workspace && chown -R appuser /workspace /commandhistory
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

@@ -1,0 +1,74 @@
+# OpenCode Sandbox
+
+You are running inside an isolated Docker container with restricted network access.
+
+## Sandbox Environment
+
+- **Network**: Restricted to allowed domains only. Outbound connections to other domains will be blocked.
+- **Filesystem**: Only `/workspace` is mounted from host. Other directories are isolated.
+- **Privileges**: Running in usermode. No sudo privileges.
+
+## Allowed Domains
+
+The container has network access to:
+- GitHub (api.github.com, github.com)
+- npm registry (registry.npmjs.org)
+- Anthropic (api.anthropic.com)
+- opencode.ai
+- sentry.io
+
+Plus any project-specific domains from the mounted workspace.
+
+## Superpowers
+
+Superpowers is installed for structured software development workflows.
+
+Key skills:
+- **brainstorming** - Socratic design refinement before coding
+- **writing-plans** - Detailed implementation plans
+- **test-driven-development** - RED-GREEN-REFACTOR cycle
+- **subagent-driven-development** - Task dispatch with review
+
+**Use**: `use skill tool to list skills` or `use skill tool to load superpowers/brainstorming`
+
+A memory file is loaded automatically at the start of every session:
+
+**File**: `/workspace/.context/memory.md`
+
+This file is automatically loaded as an instruction file, so its contents are available in every session. Use it to store:
+
+- Important context that should persist
+- Active tasks
+- Reminders
+- Solutions to solved problems
+
+You should read this file at the start of your session and update it when:
+- You learn something important about the project
+- You complete a significant task
+- You solve a problem
+- You're asked to remember something for later
+
+### What to Store
+
+Store notes, decisions, and working state that persist across sessions:
+
+- **decisions.md** - Design choices and why they were made
+- **wip.md** - Work in progress, issues, things to test
+- **running.md** - Commands and workflows for this project
+- **domains.md** - Domain Allowlist notes
+
+### Example Context Files
+
+```
+/workspace/.context/
+  decisions.md   - Design choices and rationale
+  wip.md       - Current issues and future ideas  
+  running.md   - How to run/debug this project
+```
+
+### When to Update Context
+
+- After making a design decision
+- When starting new work
+- When hitting issues or finding solutions
+- Before ending a session

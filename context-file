@@ -1,0 +1,45 @@
+# OpenCode Sandbox Context
+
+## Current Session State
+
+- Container running as non-root user `appuser` (via gosu)
+- No sudo privileges - usermode only
+- Docker CLI installed and working (via mounted socket)
+- appuser added to docker group (GID 991) inside container
+
+## Files Modified This Session
+
+1. **AGENTS.md.container** - Global config template at ~/.config/opencode/
+2. **Dockerfile** - Updated with:
+   - gosu for privilege dropping
+   - docker-cli for Docker client
+   - docker group (GID 991) created and appuser added to it
+3. **entrypoint.sh** - Runs init-firewall as root, then gosu appuser
+4. **run.sh** - Added `--group-add 991` flag for Docker socket access
+
+## Key Design Decisions
+
+- Entrypoint runs init-firewall as root, then uses `gosu appuser` to drop privileges
+- Docker group (GID 991) created inside container to match host socket group
+- appuser added to docker group via usermod -aG docker appuser
+- --group-add 991 flag passed at runtime to add supplementary group
+
+## Configuration Summary
+
+### Dockerfile key additions:
+```dockerfile
+RUN groupadd -g 991 docker || true
+RUN usermod -aG docker appuser || true
+```
+
+### run.sh key additions:
+```bash
+--group-add 991 \
+```
+
+## Potential Follow-ups
+
+- Test Docker-in-Docker works inside sandbox
+- Verify container can build images
+
+(End of context - updated Apr 26 2026)
