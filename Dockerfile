@@ -1,7 +1,7 @@
 FROM debian:stable-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-  ca-certificates curl git iptables ipset dnsutils coreutils procps jq bash gosu docker-cli iproute2 cron \
+  ca-certificates curl git iptables ipset dnsutils coreutils procps jq bash gosu docker-cli iproute2 cron libatomic1 \
   && update-ca-certificates \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
