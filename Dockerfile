@@ -11,13 +11,14 @@ RUN curl -L https://github.com/anomalyco/opencode/releases/download/v1.14.25/ope
   rm /tmp/opencode.tar.gz
 
 RUN mkdir -p /home/appuser && useradd -m -s /bin/bash appuser || true
+RUN chown -R appuser:appuser /home/appuser
 RUN groupadd -g 991 docker || true
 RUN usermod -aG docker appuser || true
 RUN curl -L https://github.com/asdf-vm/asdf/releases/download/v0.19.0/asdf-v0.19.0-linux-arm64.tar.gz -o /tmp/asdf.tar.gz && \
-  tar -xzf /tmp/asdf.tar.gz -C /tmp
-RUN mkdir -p /home/appuser/asdf && mv /tmp/asdf/bin/* /home/appuser/asdf/ && mv /tmp/asdf/completions/* /home/appuser/asdf/completions/ 2>/dev/null || true
-RUN rm -rf /tmp/asdf /tmp/asdf.tar.gz && chown -R appuser:appuser /home/appuser
-RUN printf 'export ASDF_DIR=/home/appuser/asdf\nsource $ASDF_DIR/asdf.sh\n' >> /home/appuser/.bashrc
+  tar -xzf /tmp/asdf.tar.gz -C /tmp && \
+  mv /tmp/asdf /usr/local/bin/asdf && \
+  chmod +x /usr/local/bin/asdf && \
+  rm /tmp/asdf.tar.gz
 
 RUN mkdir /commandhistory && touch /commandhistory/.bash_history && chown -R appuser /commandhistory || true
 
