@@ -2,7 +2,9 @@
   "$schema": "https://opencode.ai/config.json",
   "instructions": ["/workspace/.context/memory.md"],
   "plugin": ["superpowers@git+https://github.com/obra/superpowers.git"],
-  "skills": ["/home/appuser/skills"],
+  "skills": {
+    "context-save": "/home/appuser/skills/context-save"
+  },
   "mcp": {
     "context7": {
       "type": "remote",
