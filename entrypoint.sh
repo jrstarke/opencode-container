@@ -9,6 +9,11 @@ if [ -f /home/appuser/.cron ]; then
   crontab /home/appuser/.cron
 fi
 
+if [ -n "$GIT_USER_NAME" ] || [ -n "$GIT_USER_EMAIL" ]; then
+  gosu appuser git config --global user.name "$GIT_USER_NAME"
+  gosu appuser git config --global user.email "$GIT_USER_EMAIL"
+fi
+
 service cron start
 
 exec gosu appuser "$@"

@@ -21,6 +21,10 @@ Rebuild the container to test changes:
 ./run.sh
 ```
 
+## Git Configuration
+
+`run.sh` automatically collects `user.name` and `user.email` from the host's git global config and passes them to the container via environment variables. The entrypoint configures git for the appuser inside the container.
+
 ## Available Skills
 
 - `context-save` - Located at `/home/appuser/.config/opencode/skills/context-save`
