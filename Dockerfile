@@ -22,6 +22,12 @@ RUN curl -L https://github.com/asdf-vm/asdf/releases/download/v0.19.0/asdf-v0.19
 
 RUN mkdir /commandhistory && touch /commandhistory/.bash_history && chown -R appuser /commandhistory || true
 
+RUN mkdir -p /home/appuser/.asdf/shims && chown -R appuser:appuser /home/appuser/.asdf
+
+RUN echo 'export ASDF_DIR=/home/appuser/.asdf' >> /home/appuser/.bashrc && \
+    echo 'export PATH=/home/appuser/.asdf/shims:$PATH' >> /home/appuser/.bashrc && \
+    chown appuser:appuser /home/appuser/.bashrc
+
 ENV HOST_WORKSPACE=/workspace
 
 COPY init-firewall.sh /usr/local/bin/init-firewall.sh
