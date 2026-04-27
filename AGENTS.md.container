@@ -19,7 +19,13 @@ The container has network access to:
 
 Plus any project-specific domains from the mounted workspace.
 
-## Superpowers
+The container has asdf for version management. Install runtimes (node, python, etc.) with:
+
+```bash
+asdf plugin add node
+asdf install node latest
+asdf global node latest
+```
 
 Superpowers is installed for structured software development workflows.
 

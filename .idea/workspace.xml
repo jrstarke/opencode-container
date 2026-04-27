@@ -12,6 +12,7 @@
       <change beforePath="$PROJECT_DIR$/.context/running.md" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.context/wip.md" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AGENTS.md.container" beforeDir="false" afterPath="$PROJECT_DIR$/AGENTS.md.container" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,7 +55,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1777223913601</updated>
-      <workItem from="1777223914731" duration="13441000" />
+      <workItem from="1777223914731" duration="13495000" />
     </task>
     <servers />
   </component>
