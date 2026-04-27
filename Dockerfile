@@ -24,11 +24,8 @@ RUN mkdir /commandhistory && touch /commandhistory/.bash_history && chown -R app
 
 RUN mkdir -p /home/appuser/.asdf/shims && chown -R appuser:appuser /home/appuser/.asdf
 
-RUN echo 'export ASDF_DIR=/home/appuser/.asdf' >> /home/appuser/.bashrc && \
-    echo 'export PATH=/home/appuser/.asdf/shims:$PATH' >> /home/appuser/.bashrc && \
-    chown appuser:appuser /home/appuser/.bashrc
-
 ENV HOST_WORKSPACE=/workspace
+ENV PATH=/home/appuser/.asdf/shims:$PATH
 
 COPY init-firewall.sh /usr/local/bin/init-firewall.sh
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
