@@ -1,7 +1,7 @@
 FROM debian:stable-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-  ca-certificates curl git iptables ipset dnsutils coreutils procps jq bash gosu docker-cli iproute2 \
+  ca-certificates curl git iptables ipset dnsutils coreutils procps jq bash gosu docker-cli iproute2 cron \
   && update-ca-certificates \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -29,7 +29,9 @@ COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY AGENTS.md.container /home/appuser/.config/opencode/AGENTS.md
 COPY opencode.json.container /home/appuser/.config/opencode/opencode.json
 COPY skills /home/appuser/skills
-RUN chmod -R 755 /home/appuser/skills && chown -R appuser:appuser /home/appuser/skills
+COPY scripts /home/appuser/scripts
+COPY cron/context-save /home/appuser/.cron
+RUN chmod -R 755 /home/appuser/skills /home/appuser/scripts && chown -R appuser:appuser /home/appuser/skills /home/appuser/scripts
 RUN chmod 755 /usr/local/bin/init-firewall.sh /usr/local/bin/entrypoint.sh
 
 RUN mkdir -p /workspace && chown -R appuser /workspace /commandhistory
