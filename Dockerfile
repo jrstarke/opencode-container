@@ -1,7 +1,7 @@
 FROM debian:stable-slim
 
 ARG TARGETARCH=amd64
-ARG OPENCODE_VERSION=1.14.25
+ARG OPENCODE_VERSION=1.15.3
 ARG ASDF_VERSION=0.19.0
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
