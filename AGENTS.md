@@ -27,11 +27,4 @@ Rebuild the container to test changes:
 
 ## Available Skills
 
-- `context-save` - Located at `/home/appuser/.config/opencode/skills/context-save`
-
-**Note:** Skills require explicit path in config:
-```json
-"skills": {
-  "paths": ["/home/appuser/.config/opencode/skills"]
-}
-```
+Skills are defined in `/home/appuser/.cache/opencode/packages/superpowers@git+https:/github.com/obra/superpowers.git/node_modules/superpowers/skills/`

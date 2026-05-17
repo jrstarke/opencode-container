@@ -16,6 +16,8 @@ opencode.ai
 sentry.io
 mcp.context7.com
 mcp.exa.ai
+tensorzero.f00f.xyz
+nodejs.org
 "
 
 DOCKER_DNS_RULES=$(iptables-save -t nat | grep "127\.0\.0\.11" || true)

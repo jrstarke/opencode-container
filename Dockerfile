@@ -31,10 +31,6 @@ COPY init-firewall.sh /usr/local/bin/init-firewall.sh
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY AGENTS.md.container /home/appuser/.config/opencode/AGENTS.md
 COPY opencode.json.container /home/appuser/.config/opencode/opencode.json
-COPY skills /home/appuser/.config/opencode/skills
-COPY scripts /home/appuser/scripts
-COPY cron/context-save /home/appuser/.cron
-RUN chmod -R 755 /home/appuser/.config/opencode/skills /home/appuser/scripts && chown -R appuser:appuser /home/appuser/.config/opencode/skills /home/appuser/scripts
 RUN chmod 755 /usr/local/bin/init-firewall.sh /usr/local/bin/entrypoint.sh
 
 RUN mkdir -p /workspace && chown -R appuser /workspace /commandhistory

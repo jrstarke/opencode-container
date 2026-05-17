@@ -19,10 +19,36 @@ The container has network access to:
 
 Plus any project-specific domains from the mounted workspace.
 
+### Adding New Domains
+
+If you need network access to a domain not listed above, you can add it dynamically without restarting the container:
+
+1. **Identify your host machine name**: Run this in the container:
+   ```bash
+   echo $HOST_WORKSPACE
+   ```
+   This outputs the path to your host's workspace (e.g., `/Users/jstarke/git/agents/opencode-container`). The directory name is your host machine identifier.
+
+2. **Request domain access**: Run `hostname` in the container to get the container ID, then provide the user with a command that includes the actual hostname:
+   ```bash
+   # Run in container first to get hostname, then give user this (with hostname filled in):
+   docker exec -it --user root <HOSTNAME> bash -c "
+     DOMAIN='new-domain.com'
+     for ip in \$(dig +noall +answer A \"\$DOMAIN\" | awk '\$4 == \"A\" {print \$5}'); do
+       ipset add allowed-domains \"\$ip\"
+     done
+   "
+   ```
+   
+   For persistent access, add to the allowed-domains file and rebuild:
+   ```bash
+   echo "new-domain.com" >> /path/to/allowed-domains && ./run.sh
+   ```
+
 The container has asdf for version management. Install runtimes (node, python, etc.) with:
 
 ```bash
-asdf plugin add node
+asdf plugin add nodejs
 asdf install node latest
 asdf global node latest
 ```
@@ -41,12 +67,9 @@ A memory file is loaded automatically at the start of every session:
 
 **File**: `/workspace/.context/memory.md`
 
-This file is automatically loaded as an instruction file, so its contents are available in every session. Use it to store:
+This file is automatically loaded as an instruction file, so its contents are available in every session.
 
-- Important context that should persist
-- Active tasks
-- Reminders
-- Solutions to solved problems
+**Proactively store decisions**: During user interactions, consider if you're making a choice that should be recorded. When in doubt, save it—future you will thank you. Use the `context-save` skill to checkpoint important state.
 
 You should read this file at the start of your session and update it when:
 - You learn something important about the project
