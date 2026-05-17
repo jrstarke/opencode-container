@@ -8,11 +8,8 @@
       <change beforePath="$PROJECT_DIR$/.context/memory.md" beforeDir="false" afterPath="$PROJECT_DIR$/.context/memory.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.context/state.json" beforeDir="false" afterPath="$PROJECT_DIR$/.context/state.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AGENTS.md.container" beforeDir="false" afterPath="$PROJECT_DIR$/AGENTS.md.container" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cron/context-save" beforeDir="false" afterPath="$PROJECT_DIR$/cron/context-save" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/init-firewall.sh" beforeDir="false" afterPath="$PROJECT_DIR$/init-firewall.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/opencode.json.container" beforeDir="false" afterPath="$PROJECT_DIR$/opencode.json.container" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/save-context.sh" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/save-context.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/entrypoint.sh" beforeDir="false" afterPath="$PROJECT_DIR$/entrypoint.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,7 +54,7 @@
       <updated>1777223913601</updated>
       <workItem from="1777223914731" duration="13495000" />
       <workItem from="1777618847838" duration="3846000" />
-      <workItem from="1778685479295" duration="606000" />
+      <workItem from="1778685479295" duration="3691000" />
     </task>
     <servers />
   </component>
