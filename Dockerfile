@@ -1,7 +1,6 @@
 FROM debian:stable-slim
 
 ARG TARGETARCH=amd64
-
 ENV OPENCODE_VERSION=1.14.25
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -10,7 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN ARCH=$(echo "$TARGETARCH" | sed 's/amd64/x86_64/;s/arm64/aarch64/') && \
-  curl -L "https://github.com/anomalyco/opencode/releases/download/v1.14.25/opencode-linux-${ARCH}.tar.gz" -o /tmp/opencode.tar.gz && \
+  curl -L "https://github.com/anomalyco/opencode/releases/download/v${OPENCODE_VERSION}/opencode-linux-${ARCH}.tar.gz" -o /tmp/opencode.tar.gz && \
   tar -xzf /tmp/opencode.tar.gz -C /usr/local/bin opencode && \
   chmod +x /usr/local/bin/opencode && \
   rm /tmp/opencode.tar.gz
