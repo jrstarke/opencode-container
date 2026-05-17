@@ -1,7 +1,8 @@
 FROM debian:stable-slim
 
 ARG TARGETARCH=amd64
-ENV OPENCODE_VERSION=1.14.25
+ARG OPENCODE_VERSION=1.14.25
+ARG ASDF_VERSION=0.19.0
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
   ca-certificates curl git iptables ipset dnsutils coreutils procps jq bash gosu docker-cli iproute2 libatomic1 \
@@ -19,7 +20,7 @@ RUN chown -R appuser:appuser /home/appuser
 RUN groupadd -g 991 docker || true
 RUN usermod -aG docker appuser || true
 RUN ARCH=$(echo "$TARGETARCH" | sed 's/amd64/x86_64/;s/arm64/aarch64/') && \
-  curl -L "https://github.com/asdf-vm/asdf/releases/download/v0.19.0/asdf-v0.19.0-linux-${ARCH}.tar.gz" -o /tmp/asdf.tar.gz && \
+  curl -L "https://github.com/asdf-vm/asdf/releases/download/v${ASDF_VERSION}/asdf-v${ASDF_VERSION}-linux-${ARCH}.tar.gz" -o /tmp/asdf.tar.gz && \
   tar -xzf /tmp/asdf.tar.gz -C /tmp && \
   mv /tmp/asdf /usr/local/bin/asdf && \
   chmod +x /usr/local/bin/asdf && \
