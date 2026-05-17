@@ -1,2 +1,0 @@
-# Auto-save context every 5 minutes
-*/5 * * * * appuser /home/appuser/scripts/save-context.sh "auto-save" "" "[]" "[]" >> /tmp/context-save.log 2>&1
