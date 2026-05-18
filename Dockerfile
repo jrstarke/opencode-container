@@ -1,6 +1,6 @@
 FROM debian:stable-slim
 
-ARG TARGETARCH=amd64
+ARG TARGETARCH=arm64
 ARG OPENCODE_VERSION=1.15.3
 ARG ASDF_VERSION=0.19.0
 
@@ -19,7 +19,7 @@ RUN mkdir -p /home/appuser && useradd -m -s /bin/bash appuser || true
 RUN chown -R appuser:appuser /home/appuser
 RUN groupadd -g 991 docker || true
 RUN usermod -aG docker appuser || true
-RUN ARCH=$(echo "$TARGETARCH" | sed 's/amd64/amd64/;s/arm64/aarch64/') && \
+RUN ARCH=$(echo "$TARGETARCH" | sed 's/amd64/amd64/;s/arm64/arm64/') && \
   curl -L "https://github.com/asdf-vm/asdf/releases/download/v${ASDF_VERSION}/asdf-v${ASDF_VERSION}-linux-${ARCH}.tar.gz" -o /tmp/asdf.tar.gz && \
   tar -xzf /tmp/asdf.tar.gz -C /tmp && \
   mv /tmp/asdf /usr/local/bin/asdf && \
