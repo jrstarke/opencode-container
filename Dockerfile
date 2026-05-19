@@ -1,6 +1,6 @@
 FROM debian:stable-slim
 
-ARG TARGETARCH=arm64
+ARG TARGETARCH
 ARG OPENCODE_VERSION=1.15.3
 ARG ASDF_VERSION=0.19.0
 
@@ -9,8 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && update-ca-certificates \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN ARCH=$(echo "$TARGETARCH" | sed 's/amd64/x64/;s/arm64/arm64/') && \
-  curl -L "https://github.com/anomalyco/opencode/releases/download/v${OPENCODE_VERSION}/opencode-linux-${ARCH}.tar.gz" -o /tmp/opencode.tar.gz && \
+RUN curl -L "https://github.com/anomalyco/opencode/releases/download/v${OPENCODE_VERSION}/opencode-linux-${TARGETARCH}.tar.gz" -o /tmp/opencode.tar.gz && \
   tar -xzf /tmp/opencode.tar.gz -C /usr/local/bin opencode && \
   chmod +x /usr/local/bin/opencode && \
   rm /tmp/opencode.tar.gz
@@ -19,8 +18,8 @@ RUN mkdir -p /home/appuser && useradd -m -s /bin/bash appuser || true
 RUN chown -R appuser:appuser /home/appuser
 RUN groupadd -g 991 docker || true
 RUN usermod -aG docker appuser || true
-RUN ARCH=$(echo "$TARGETARCH" | sed 's/amd64/amd64/;s/arm64/arm64/') && \
-  curl -L "https://github.com/asdf-vm/asdf/releases/download/v${ASDF_VERSION}/asdf-v${ASDF_VERSION}-linux-${ARCH}.tar.gz" -o /tmp/asdf.tar.gz && \
+RUN ASDF_ARCH=$(echo "$TARGETARCH" | sed 's/amd64/amd64/;s/arm64/aarch64/') && \
+  curl -L "https://github.com/asdf-vm/asdf/releases/download/v${ASDF_VERSION}/asdf-v${ASDF_VERSION}-linux-${ASDF_ARCH}.tar.gz" -o /tmp/asdf.tar.gz && \
   tar -xzf /tmp/asdf.tar.gz -C /tmp && \
   mv /tmp/asdf /usr/local/bin/asdf && \
   chmod +x /usr/local/bin/asdf && \
