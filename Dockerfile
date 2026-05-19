@@ -38,6 +38,6 @@ COPY AGENTS.md.container /home/appuser/.config/opencode/AGENTS.md
 COPY opencode.json.container /home/appuser/.config/opencode/opencode.json
 RUN chmod 755 /usr/local/bin/init-firewall.sh /usr/local/bin/entrypoint.sh
 
-RUN mkdir -p /workspace && chown -R appuser /workspace /commandhistory
+RUN mkdir -p /workspace /home/appuser/.local/share/opencode /home/appuser/.local/state /home/appuser/.cache /home/appuser/.config && chown -R appuser:appuser /workspace /home/appuser /commandhistory
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
