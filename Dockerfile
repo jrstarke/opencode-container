@@ -9,7 +9,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && update-ca-certificates \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN curl -L "https://github.com/anomalyco/opencode/releases/download/v${OPENCODE_VERSION}/opencode-linux-${TARGETARCH}.tar.gz" -o /tmp/opencode.tar.gz && \
+RUN OPENCODE_ARCH=$(echo "$TARGETARCH" | sed 's/amd64/x64/') && \
+  curl -L "https://github.com/anomalyco/opencode/releases/download/v${OPENCODE_VERSION}/opencode-linux-${OPENCODE_ARCH}.tar.gz" -o /tmp/opencode.tar.gz && \
   tar -xzf /tmp/opencode.tar.gz -C /usr/local/bin opencode && \
   chmod +x /usr/local/bin/opencode && \
   rm /tmp/opencode.tar.gz
