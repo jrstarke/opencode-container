@@ -18,8 +18,7 @@ RUN mkdir -p /home/appuser && useradd -m -s /bin/bash appuser || true
 RUN chown -R appuser:appuser /home/appuser
 RUN groupadd -g 991 docker || true
 RUN usermod -aG docker appuser || true
-RUN ASDF_ARCH=$(echo "$TARGETARCH" | sed 's/amd64/amd64/;s/arm64/aarch64/') && \
-  curl -L "https://github.com/asdf-vm/asdf/releases/download/v${ASDF_VERSION}/asdf-v${ASDF_VERSION}-linux-${ASDF_ARCH}.tar.gz" -o /tmp/asdf.tar.gz && \
+RUN curl -L "https://github.com/asdf-vm/asdf/releases/download/v${ASDF_VERSION}/asdf-v${ASDF_VERSION}-linux-${TARGETARCH}.tar.gz" -o /tmp/asdf.tar.gz && \
   tar -xzf /tmp/asdf.tar.gz -C /tmp && \
   mv /tmp/asdf /usr/local/bin/asdf && \
   chmod +x /usr/local/bin/asdf && \
