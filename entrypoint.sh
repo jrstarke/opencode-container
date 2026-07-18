@@ -10,4 +10,16 @@ if [ -n "$GIT_USER_NAME" ] || [ -n "$GIT_USER_EMAIL" ]; then
   gosu appuser git config --global user.email "$GIT_USER_EMAIL"
 fi
 
-exec gosu appuser "$@"
+case "$1" in
+  opencode)
+    shift
+    exec gosu appuser opencode "$@"
+    ;;
+  agy)
+    shift
+    exec gosu appuser agy "$@"
+    ;;
+  *)
+    exec gosu appuser "$@"
+    ;;
+esac

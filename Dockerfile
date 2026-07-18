@@ -1,7 +1,7 @@
 FROM debian:stable-slim
 
 ARG TARGETARCH=arm64
-ARG OPENCODE_VERSION=1.15.3
+ARG OPENCODE_VERSION=1.17.13
 ARG ASDF_VERSION=0.19.0
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -12,8 +12,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN ARCH=$(echo "$TARGETARCH" | sed 's/amd64/x64/;s/arm64/arm64/') && \
   curl -L "https://github.com/anomalyco/opencode/releases/download/v${OPENCODE_VERSION}/opencode-linux-${ARCH}.tar.gz" -o /tmp/opencode.tar.gz && \
   tar -xzf /tmp/opencode.tar.gz -C /usr/local/bin opencode && \
-  chmod +x /usr/local/bin/opencode && \
-  rm /tmp/opencode.tar.gz
+   chmod +x /usr/local/bin/opencode && \
+   # Install Antigravity CLI (latest GitHub release)
+   ARCH=$(echo "$TARGETARCH" | sed 's/amd64/x64/;s/arm64/arm64/') && \
+     curl -L "https://github.com/antigravity/cli/releases/latest/download/antigravity-linux-${ARCH}.tar.gz" -o /tmp/agy.tar.gz && \
+     tar -xzf /tmp/agy.tar.gz -C /usr/local/bin agy && \
+     chmod +x /usr/local/bin/agy && \
+     rm /tmp/agy.tar.gz && rm /tmp/opencode.tar.gz
 
 RUN mkdir -p /home/appuser && useradd -m -s /bin/bash appuser || true
 RUN chown -R appuser:appuser /home/appuser
