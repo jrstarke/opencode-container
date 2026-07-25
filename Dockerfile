@@ -9,6 +9,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && update-ca-certificates \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Build dependencies for asdf's python plugin (pyenv/python-build compiles
+# CPython from source; there's no prebuilt-binary path like nodejs has).
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
+  libsqlite3-dev libncursesw5-dev xz-utils tk-dev libxml2-dev \
+  libxmlsec1-dev libffi-dev liblzma-dev \
+  && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 RUN ARCH=$(echo "$TARGETARCH" | sed 's/amd64/x64/;s/arm64/arm64/') && \
   curl -L "https://github.com/anomalyco/opencode/releases/download/v${OPENCODE_VERSION}/opencode-linux-${ARCH}.tar.gz" -o /tmp/opencode.tar.gz && \
   tar -xzf /tmp/opencode.tar.gz -C /usr/local/bin opencode && \
@@ -49,6 +57,31 @@ RUN mkdir -p /home/appuser/.asdf/shims && chown -R appuser:appuser /home/appuser
 RUN mkdir -p /home/appuser/.gemini/config && chown -R appuser:appuser /home/appuser/.gemini
 RUN mkdir -p /home/appuser/.claude/config && chown -R appuser:appuser /home/appuser/.claude
 
+# Pre-install node (latest LTS) and python (latest stable 3.x) via asdf, and
+# pin them as appuser's global default via `asdf set --home` (writes
+# ~/.tool-versions). Versions resolved at the time this was written:
+#   node   -> `asdf latest nodejs lts`
+#   python -> newest non-experimental 3.x from `asdf list all python`
+ARG NODE_VERSION=24.18.0
+ARG PYTHON_VERSION=3.14.6
+RUN gosu appuser bash -lc "\
+  export PATH=/usr/local/bin:\$PATH && \
+  asdf plugin add nodejs && \
+  asdf plugin add python && \
+  asdf install nodejs ${NODE_VERSION} && \
+  asdf install python ${PYTHON_VERSION} && \
+  asdf set --home nodejs ${NODE_VERSION} && \
+  asdf set --home python ${PYTHON_VERSION} \
+"
+
+# Install OpenWolf (context-management middleware for coding agents,
+# https://github.com/cytostack/openwolf) globally into appuser's asdf-managed
+# node, so `openwolf` is on PATH via the asdf shims already on PATH (below).
+RUN gosu appuser bash -lc "\
+  export PATH=/home/appuser/.asdf/shims:\$PATH && \
+  npm install -g openwolf \
+"
+
 # Pre-accept onboarding and the /workspace trust dialog. This container runs
 # with --rm and no volume for ~/.claude, so without this the first-run wizard
 # and trust prompt would reappear on every run. hasCompletedOnboarding /
@@ -62,6 +95,19 @@ RUN echo '{"hasCompletedOnboarding": true, "projects": {"/workspace": {"hasTrust
 # too (untested against a real top-level session; needs verification).
 RUN echo '{"skipDangerousModePermissionPrompt": true, "theme": "light"}' > /home/appuser/.claude/settings.json && \
   chown appuser:appuser /home/appuser/.claude/settings.json
+
+# Install the Superpowers plugin for Claude Code, mirroring the opencode.json
+# declarative "plugin" entry. Docs describe a CLAUDE_CODE_PLUGIN_SEED_DIR /
+# CLAUDE_CODE_PLUGIN_CACHE_DIR container-seeding mechanism for this, but it
+# did not actually get picked up at runtime when tested against this image
+# (v2.1.220) — `claude plugin list` came back empty despite a correctly
+# populated seed dir. Installing straight into the default ~/.claude/plugins
+# location at build time works and is verified to persist and load normally.
+RUN gosu appuser bash -lc "\
+  export PATH=/home/appuser/.local/bin:\$PATH && \
+  claude plugin marketplace add obra/superpowers-marketplace && \
+  claude plugin install superpowers@superpowers-marketplace \
+"
 
 ENV HOST_WORKSPACE=/workspace
 ENV PATH=/home/appuser/.local/bin:/home/appuser/.asdf/shims:$PATH
