@@ -12,13 +12,19 @@ docker build -t opencode-sandbox "$SCRIPT_DIR"
 
 echo "=== Running opencode sandbox ==="
 echo "Workspace: $WORKSPACE_DIR"
+# Persist Google auth token
+antigravity_auth_dir="${HOME}/.gemini/antigravity-cli"
+mkdir -p "$antigravity_auth_dir"
+
 docker run -it --rm \
   --group-add docker \
   --cap-add=NET_ADMIN \
   --cap-add=NET_RAW \
   -v "$WORKSPACE_DIR":/workspace \
   -v opencode-sandbox-history:/commandhistory \
+  -v opencode-sandbox-claude-config:/home/appuser/.claude \
   -v /var/run/docker.sock:/var/run/docker.sock \
+  -v "$antigravity_auth_dir":/home/appuser/.gemini/antigravity-cli \
   -e NODE_OPTIONS="--max-old-space-size=4096" \
   -e HOME=/home/appuser \
   -e HOST_WORKSPACE="$WORKSPACE_DIR" \
@@ -26,4 +32,4 @@ docker run -it --rm \
   -e GIT_USER_EMAIL="$GIT_USER_EMAIL" \
   -w /workspace \
   opencode-sandbox \
-  /usr/local/bin/opencode
+  "$@"
