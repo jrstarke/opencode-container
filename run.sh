@@ -4,6 +4,17 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKSPACE_DIR="${WORKSPACE_DIR:-$(pwd)}"
 
+MOUNT_DOCKER_SOCKET=false
+ARGS=()
+for arg in "$@"; do
+  if [ "$arg" = "--mount-docker-socket" ]; then
+    MOUNT_DOCKER_SOCKET=true
+  else
+    ARGS+=("$arg")
+  fi
+done
+set -- "${ARGS[@]}"
+
 GIT_USER_NAME=$(git config --global user.name 2>/dev/null || echo "")
 GIT_USER_EMAIL=$(git config --global user.email 2>/dev/null || echo "")
 
@@ -22,14 +33,20 @@ echo "Workspace: $WORKSPACE_DIR"
 antigravity_auth_dir="${HOME}/.gemini/antigravity-cli"
 mkdir -p "$antigravity_auth_dir"
 
+DOCKER_SOCKET_ARGS=()
+if [ "$MOUNT_DOCKER_SOCKET" = "true" ]; then
+  echo "Mounting host Docker socket into the sandbox (--mount-docker-socket)"
+  DOCKER_SOCKET_ARGS=(--group-add docker -v /var/run/docker.sock:/var/run/docker.sock)
+fi
+
 docker run -it --rm \
-  --group-add docker \
   --cap-add=NET_ADMIN \
   --cap-add=NET_RAW \
+  --add-host=host.docker.internal:host-gateway \
   -v "$WORKSPACE_DIR":/workspace \
   -v opencode-sandbox-history:/commandhistory \
   -v opencode-sandbox-claude-config:/home/appuser/.claude \
-  -v /var/run/docker.sock:/var/run/docker.sock \
+  "${DOCKER_SOCKET_ARGS[@]}" \
   -v "$antigravity_auth_dir":/home/appuser/.gemini/antigravity-cli \
   -e NODE_OPTIONS="--max-old-space-size=4096" \
   -e HOME=/home/appuser \

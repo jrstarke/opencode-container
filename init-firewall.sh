@@ -133,6 +133,17 @@ echo "Host network detected as: $HOST_NETWORK"
 iptables -A INPUT -s "$HOST_NETWORK" -j ACCEPT
 iptables -A OUTPUT -d "$HOST_NETWORK" -j ACCEPT
 
+# host.docker.internal (added via `docker run --add-host=host.docker.internal:host-gateway`)
+# can resolve to an address outside the container's own default-route subnet
+# above -- e.g. when Docker routes host access through a VM layer, as Docker
+# Desktop does on Mac/Windows. Allow it explicitly via /etc/hosts rather than
+# assuming HOST_NETWORK already covers it.
+HOST_DOCKER_INTERNAL_IP=$(getent hosts host.docker.internal 2>/dev/null | awk '{print $1}' | head -1)
+if [ -n "$HOST_DOCKER_INTERNAL_IP" ]; then
+    echo "Adding host.docker.internal ($HOST_DOCKER_INTERNAL_IP) to allowed domains..."
+    ipset add allowed-domains "$HOST_DOCKER_INTERNAL_IP" -exist
+fi
+
 iptables -P INPUT DROP
 iptables -P FORWARD DROP
 iptables -P OUTPUT DROP
