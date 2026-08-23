@@ -1,2 +1,4 @@
 .context/*
 !.context/decisions/
+
+.idea/workspace.xml
