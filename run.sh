@@ -12,6 +12,12 @@ docker build -t opencode-sandbox "$SCRIPT_DIR"
 
 echo "=== Running opencode sandbox ==="
 echo "Workspace: $WORKSPACE_DIR"
+# opencode-sandbox-claude-config holds the whole ~/.claude dir, but only the
+# OAuth credentials in it are actually meant to survive across runs.
+# entrypoint.sh re-seeds CLAUDE.md/settings.json/plugins from the image and
+# wipes projects/ (memory + session history, which would otherwise bleed
+# across different host projects since they all mount to /workspace) on
+# every start.
 # Persist Google auth token
 antigravity_auth_dir="${HOME}/.gemini/antigravity-cli"
 mkdir -p "$antigravity_auth_dir"

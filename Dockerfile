@@ -88,9 +88,21 @@ RUN gosu appuser bash -lc "\
   npm install -g openwolf@${OPENWOLF_VERSION} \
 "
 
-# Pre-accept onboarding and the /workspace trust dialog. This container runs
-# with --rm and no volume for ~/.claude, so without this the first-run wizard
-# and trust prompt would reappear on every run. hasCompletedOnboarding /
+# Seed directory for ~/.claude state that must always reflect the image,
+# not whatever a previous container run's named volume happened to capture.
+# ~/.claude itself is a named volume (see run.sh) so it survives across
+# `--rm` runs for things that should persist, like OAuth credentials — but
+# that means anything baked in under ~/.claude at build time is only ever
+# seen once, the first time the volume is created, and silently shadowed by
+# the volume's own copy on every rebuild after that. entrypoint.sh copies
+# CLAUDE.md/settings.json/plugins out of here into ~/.claude on every start
+# so those specific pieces stay image-authoritative instead of drifting.
+RUN mkdir -p /opt/sandbox-seed && chown appuser:appuser /opt/sandbox-seed
+
+# Pre-accept onboarding and the /workspace trust dialog. ~/.claude.json (note:
+# NOT under ~/.claude/ — it's a sibling file) is never mounted, so it's
+# already fresh from the image on every run; without this the first-run
+# wizard and trust prompt would reappear every time. hasCompletedOnboarding /
 # hasTrustDialogAccepted are undocumented internal state keys, not a public
 # config surface, but stable enough to rely on given the binary is pinned
 # above via DISABLE_UPDATES.
@@ -99,7 +111,15 @@ RUN echo '{"hasCompletedOnboarding": true, "projects": {"/workspace": {"hasTrust
 
 # Best-effort attempt to skip the Bypass Permissions mode confirmation dialog
 # too (untested against a real top-level session; needs verification).
-RUN echo '{"skipDangerousModePermissionPrompt": true, "theme": "light"}' > /home/appuser/.claude/settings.json && \
+# advisorModel is here because it was previously set at runtime and persisted
+# only by accident of the old whole-directory volume mount; baking it in
+# keeps that default now that settings.json is re-seeded every start.
+# Written to the real ~/.claude/settings.json (not the seed dir) because
+# `claude plugin install` below records enabledPlugins into this same file —
+# writing straight to the seed copy first would just get overwritten by that
+# install with a copy that's missing our manual keys. The seed dir gets the
+# post-install merged version instead, see below.
+RUN echo '{"skipDangerousModePermissionPrompt": true, "theme": "light", "advisorModel": "opus"}' > /home/appuser/.claude/settings.json && \
   chown appuser:appuser /home/appuser/.claude/settings.json
 
 # Install the Superpowers plugin for Claude Code, mirroring the opencode.json
@@ -109,10 +129,19 @@ RUN echo '{"skipDangerousModePermissionPrompt": true, "theme": "light"}' > /home
 # (v2.1.220) — `claude plugin list` came back empty despite a correctly
 # populated seed dir. Installing straight into the default ~/.claude/plugins
 # location at build time works and is verified to persist and load normally.
+# `claude plugin install` also writes enabledPlugins into settings.json, so
+# both plugins/ and settings.json are copied out to the seed dir afterward —
+# copying only plugins/ would silently drop the enablement state and the
+# plugin would install but never load. Seeding from here (not settings.json
+# baked earlier in isolation) is what keeps a rebuild's plugin state actually
+# taking effect at runtime instead of being shadowed by whatever an older
+# image installed into the volume.
 RUN gosu appuser bash -lc "\
   export PATH=/home/appuser/.local/bin:\$PATH && \
   claude plugin marketplace add obra/superpowers-marketplace && \
-  claude plugin install superpowers@superpowers-marketplace \
+  claude plugin install superpowers@superpowers-marketplace && \
+  cp -r /home/appuser/.claude/plugins /opt/sandbox-seed/plugins && \
+  cp /home/appuser/.claude/settings.json /opt/sandbox-seed/settings.json \
 "
 
 ENV HOST_WORKSPACE=/workspace
@@ -125,10 +154,10 @@ ENV DISABLE_UPDATES=1
 COPY init-firewall.sh /usr/local/bin/init-firewall.sh
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY AGENTS.md.container /home/appuser/.config/opencode/AGENTS.md
-COPY AGENTS.md.container /home/appuser/.claude/CLAUDE.md
+COPY AGENTS.md.container /opt/sandbox-seed/CLAUDE.md
 COPY opencode.json.container /home/appuser/.config/opencode/opencode.json
 RUN chmod 755 /usr/local/bin/init-firewall.sh /usr/local/bin/entrypoint.sh
-RUN chown appuser:appuser /home/appuser/.claude/CLAUDE.md
+RUN chown appuser:appuser /opt/sandbox-seed/CLAUDE.md
 
 RUN mkdir -p /workspace && chown -R appuser /workspace /commandhistory
 
