@@ -1,49 +1,40 @@
 # OpenCode Sandbox
 
-You are running inside an isolated Docker container with restricted network access.
-
 ## Sandbox Environment
 
-- **Network**: Restricted to allowed domains only. Outbound connections to other domains will be blocked.
-- **Filesystem**: Only `/workspace` is mounted from host. Other directories are isolated.
-- **Privileges**: Running in usermode. No sudo privileges.
+You are running inside an isolated Docker container with restricted network access, enforced by an iptables/ipset firewall (`/usr/local/bin/init-firewall.sh`) applied at container startup.
+
+- **Network**: Outbound connections are dropped by default. Only explicitly allowlisted domains/IP ranges are reachable — everything else fails fast (connection refused/rejected), by design.
+- **Filesystem**: Only `/workspace` is mounted from the host. Other host directories are not visible here.
+- **Privileges**: Running as `appuser` in usermode. No sudo.
 
 ## Allowed Domains
 
-The container has network access to:
-- GitHub (api.github.com, github.com)
-- npm registry (registry.npmjs.org)
-- Anthropic (api.anthropic.com)
-- opencode.ai
-- sentry.io
+The allowlist has two sources:
 
-Plus any project-specific domains from the mounted workspace.
+- **Baked-in defaults** — see `DEFAULT_DOMAINS` in `/usr/local/bin/init-firewall.sh`. Currently includes things like the npm registry, Anthropic's API, opencode.ai, sentry.io, nodejs.org, and a few Google API hosts.
+- **Project-specific extras** — `/workspace/allowed-domains`, one domain per line. This is the supported way a project extends access, and is read fresh each time the firewall initializes.
 
-### Adding New Domains
+GitHub's published API/web/git IP ranges are always allowed (fetched live from `api.github.com/meta` at startup), and the host's local network plus `host.docker.internal` are reachable too.
 
-If you need network access to a domain not listed above, you can add it dynamically without restarting the container:
+If you're unsure whether a domain is allowed, just try it rather than assuming.
 
-1. **Identify your host machine name**: Run this in the container:
-   ```bash
-   echo $HOST_WORKSPACE
-   ```
-   This outputs the path to your host's workspace (e.g., `/Users/jstarke/git/agents/opencode-container`). The directory name is your host machine identifier.
+## If You Need Something Else
 
-2. **Request domain access**: Run `hostname` in the container to get the container ID, then provide the user with a command that includes the actual hostname:
-   ```bash
-   # Run in container first to get hostname, then give user this (with hostname filled in):
-   docker exec -it --user root <HOSTNAME> bash -c "
-     DOMAIN='new-domain.com'
-     for ip in \$(dig +noall +answer A \"\$DOMAIN\" | awk '\$4 == \"A\" {print \$5}'); do
-       ipset add allowed-domains \"\$ip\"
-     done
-   "
-   ```
-   
-   For persistent access, add to the allowed-domains file and rebuild:
-   ```bash
-   echo "new-domain.com" >> /path/to/allowed-domains && ./run.sh
-   ```
+If a task needs a domain that isn't covered, don't try to work around the firewall silently — surface it to the user and pick one of these, depending on urgency:
+
+- **Right now, this session (temporary)**: if the sandbox was launched with `--mount-docker-socket`, the Docker socket is mounted into this container and `appuser` is in the `docker` group, so you can add a domain to the live `ipset` yourself without a restart — no host round-trip needed. Get this container's own ID with `hostname`, then:
+  ```bash
+  CONTAINER_ID=$(hostname)
+  DOMAIN="new-domain.com"
+  docker exec --user root "$CONTAINER_ID" bash -c "
+    for ip in \$(dig +noall +answer A '$DOMAIN' | awk '\$4 == \"A\" {print \$5}'); do
+      ipset add allowed-domains \"\$ip\" -exist
+    done
+  "
+  ```
+  This only lasts until the container restarts, and it changes firewall state on a running system — tell the user what domain you're adding and why before running it, don't do it silently. The Docker socket is **not** mounted by default — check `docker ps` (or `ls /var/run/docker.sock`) before assuming it's there; if it's missing, tell the user this route needs the sandbox restarted with `--mount-docker-socket`.
+- **Going forward (persistent)**: add the domain to `/workspace/allowed-domains`, one per line. This is the supported long-term fix and takes effect on the next container start — ask the user to confirm before you edit it, since it's a standing change to the project's network policy, not just this session.
 
 The container has asdf for version management. Install runtimes (node, python, etc.) with:
 
