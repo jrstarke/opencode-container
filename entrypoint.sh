@@ -58,7 +58,12 @@ case "$1" in
     shift
     exec gosu appuser agy "$@"
     ;;
+  claude)
+    shift
+    exec gosu appuser claude --dangerously-skip-permissions "$@"
+    ;;
   *)
-    exec gosu appuser "$@"
+    # Default to opencode when no known tool is specified
+    exec gosu appuser opencode "$@"
     ;;
 esac
