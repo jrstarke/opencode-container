@@ -1,6 +1,6 @@
 .context/*
 !.context/decisions/
 
-.idea/workspace.xml
+.idea/
 
 allowed-domains.local
