@@ -5,10 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="870bcb3a-0edb-4c88-9cd1-dcc2ef98a69c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.context/memory.md" beforeDir="false" afterPath="$PROJECT_DIR$/.context/memory.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.context/state.json" beforeDir="false" afterPath="$PROJECT_DIR$/.context/state.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AGENTS.md" beforeDir="false" afterPath="$PROJECT_DIR$/AGENTS.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AGENTS.md.container" beforeDir="false" afterPath="$PROJECT_DIR$/AGENTS.md.container" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/allowed-domains" beforeDir="false" afterPath="$PROJECT_DIR$/allowed-domains" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/entrypoint.sh" beforeDir="false" afterPath="$PROJECT_DIR$/entrypoint.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/init-firewall.sh" beforeDir="false" afterPath="$PROJECT_DIR$/init-firewall.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/opencode.json.container" beforeDir="false" afterPath="$PROJECT_DIR$/opencode.json.container" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run.sh" beforeDir="false" afterPath="$PROJECT_DIR$/run.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +58,10 @@
       <updated>1777223913601</updated>
       <workItem from="1777223914731" duration="13495000" />
       <workItem from="1777618847838" duration="3846000" />
-      <workItem from="1778685479295" duration="12597000" />
+      <workItem from="1778685479295" duration="17437000" />
+      <workItem from="1783098892632" duration="607000" />
+      <workItem from="1784343261814" duration="13139000" />
+      <workItem from="1785558265457" duration="597000" />
     </task>
     <servers />
   </component>
