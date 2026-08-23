@@ -77,9 +77,15 @@ RUN gosu appuser bash -lc "\
 # Install OpenWolf (context-management middleware for coding agents,
 # https://github.com/cytostack/openwolf) globally into appuser's asdf-managed
 # node, so `openwolf` is on PATH via the asdf shims already on PATH (below).
+#
+# Pinned, and deliberately NOT on `latest`: the 2.x line (2.0.1 current) has
+# bugs we hit in practice, so this holds at the last 1.x release. Bare
+# `npm install -g openwolf` would silently move this on every rebuild.
+# Revisit once 2.x is known good.
+ARG OPENWOLF_VERSION=1.0.4
 RUN gosu appuser bash -lc "\
   export PATH=/home/appuser/.asdf/shims:\$PATH && \
-  npm install -g openwolf \
+  npm install -g openwolf@${OPENWOLF_VERSION} \
 "
 
 # Pre-accept onboarding and the /workspace trust dialog. This container runs
