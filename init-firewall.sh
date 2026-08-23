@@ -16,7 +16,6 @@ opencode.ai
 sentry.io
 mcp.context7.com
 mcp.exa.ai
-tensorzero.example.com
 nodejs.org
 daily-cloudcode-pa.googleapis.com
 oauth2.googleapis.com
@@ -95,6 +94,20 @@ if [ -f "/workspace/allowed-domains" ]; then
     if [ -n "$PROJECT_DOMAINS" ]; then
         ALL_DOMAINS="$ALL_DOMAINS
 $PROJECT_DOMAINS"
+    fi
+fi
+
+# allowed-domains.local is gitignored, for host/user-specific domains (e.g. a
+# private API gateway) that shouldn't be committed alongside the shared
+# allowed-domains file.
+echo "Checking for local domains file: /workspace/allowed-domains.local"
+if [ -f "/workspace/allowed-domains.local" ]; then
+    echo "Reading local allowed domains from /workspace/allowed-domains.local"
+    LOCAL_DOMAINS=$(cat /workspace/allowed-domains.local | collect_domains)
+    echo "Local domains read: $LOCAL_DOMAINS"
+    if [ -n "$LOCAL_DOMAINS" ]; then
+        ALL_DOMAINS="$ALL_DOMAINS
+$LOCAL_DOMAINS"
     fi
 fi
 

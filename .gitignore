@@ -2,3 +2,5 @@
 !.context/decisions/
 
 .idea/workspace.xml
+
+allowed-domains.local

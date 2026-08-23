@@ -14,6 +14,7 @@ The allowlist has two sources:
 
 - **Baked-in defaults** — see `DEFAULT_DOMAINS` in `/usr/local/bin/init-firewall.sh`. Currently includes things like the npm registry, Anthropic's API, opencode.ai, sentry.io, nodejs.org, and a few Google API hosts.
 - **Project-specific extras** — `/workspace/allowed-domains`, one domain per line. This is the supported way a project extends access, and is read fresh each time the firewall initializes.
+- **Local-only extras** — `/workspace/allowed-domains.local`, same format, but gitignored — for a host/user-specific domain (e.g. a private API gateway) that shouldn't be committed.
 
 GitHub's published API/web/git IP ranges are always allowed (fetched live from `api.github.com/meta` at startup), and the host's local network plus `host.docker.internal` are reachable too.
 

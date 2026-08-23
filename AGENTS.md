@@ -2,6 +2,7 @@
 
 - **init-firewall.sh** – Bash script that sets up iptables/ipset firewall rules and resolves allowed domains.
 - **allowed-domains** – Optional file where project-specific domains can be listed to extend the default list.
+- **allowed-domains.local** – Gitignored counterpart for host/user-specific domains that shouldn't be committed.
 - **run.sh** – Helper script used to rebuild the container when changes are made.
 - **Dockerfile** – Docker build instructions for the sandbox image.
 - **entrypoint.sh** – Container entrypoint that prepares the environment before execution.
