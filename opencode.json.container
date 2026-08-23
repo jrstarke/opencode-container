@@ -20,11 +20,26 @@
         "tensorzero::function_name::app_dev_chat": {
           "name": "App Dev"
         },
+        "tensorzero::function_name::coding": {
+          "name": "Coding"
+        },
         "tensorzero::function_name::hard_logic_chat": {
           "name": "Hard Logic"
         },
         "tensorzero::function_name::log_analysis_chat": {
           "name": "Log Analysis"
+        },
+        "tensorzero::function_name::minimax_m3": {
+          "name": "MiniMax M3"
+        },
+        "tensorzero::function_name::glm_5_2": {
+          "name": "GLM 5.2"
+        },
+        "tensorzero::function_name::kimi_k_2_5": {
+          "name": "Kimi K2.5"
+        },
+        "tensorzero::function_name::model_test": {
+          "name": "Model Test"
         }
       }
     }
