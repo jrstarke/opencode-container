@@ -53,6 +53,7 @@ docker run -it --rm \
   -e HOST_WORKSPACE="$WORKSPACE_DIR" \
   -e GIT_USER_NAME="$GIT_USER_NAME" \
   -e GIT_USER_EMAIL="$GIT_USER_EMAIL" \
+  -e TENSORZERO_BASE_URL="${TENSORZERO_BASE_URL:-}" \
   -w /workspace \
   opencode-sandbox \
   "$@"

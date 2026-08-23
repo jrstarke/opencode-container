@@ -27,6 +27,16 @@ if [ -n "$GIT_USER_NAME" ] || [ -n "$GIT_USER_EMAIL" ]; then
   gosu appuser git config --global user.email "$GIT_USER_EMAIL"
 fi
 
+# opencode.json.container ships with a placeholder TensorZero baseURL
+# (tensorzero.example.com) since the real gateway is host/user-specific and
+# shouldn't be baked into the image or committed. Substitute in the real
+# value at runtime if the host provided one, so the checked-in file never
+# needs to carry it.
+if [ -n "${TENSORZERO_BASE_URL:-}" ]; then
+  sed -i "s|https://tensorzero.example.com/openai/v1|${TENSORZERO_BASE_URL}|" \
+    /home/appuser/.config/opencode/opencode.json
+fi
+
 # Files under /workspace arrive through the host bind mount carrying the host
 # user's ownership (uid 501 on macOS), but the container runs as appuser
 # (uid 1000). Git compares the repo's st_uid against geteuid(), sees a

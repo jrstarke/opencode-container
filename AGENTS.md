@@ -5,7 +5,7 @@
 - **run.sh** – Helper script used to rebuild the container when changes are made.
 - **Dockerfile** – Docker build instructions for the sandbox image.
 - **entrypoint.sh** – Container entrypoint that prepares the environment before execution.
-- **opencode.json.container** – Configuration that is copied into the Opencode runtime.
+- **opencode.json.container** – Configuration that is copied into the Opencode runtime. Ships with a placeholder TensorZero `baseURL`; set `TENSORZERO_BASE_URL` in the host environment before running `run.sh` to substitute the real gateway at container start (see `entrypoint.sh`).
 
 ## Development Context
 - **.context/** – Stores session memory, decisions, work-in-progress notes, and stash snapshots.
