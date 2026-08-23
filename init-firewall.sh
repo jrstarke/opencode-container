@@ -18,6 +18,11 @@ mcp.context7.com
 mcp.exa.ai
 tensorzero.example.com
 nodejs.org
+daily-cloudcode-pa.googleapis.com
+oauth2.googleapis.com
+www.googleapis.com
+lh3.googleusercontent.com
+models.dev
 "
 
 DOCKER_DNS_RULES=$(iptables-save -t nat | grep "127\.0\.0\.11" || true)
