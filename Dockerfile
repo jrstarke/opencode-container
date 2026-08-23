@@ -78,11 +78,11 @@ RUN gosu appuser bash -lc "\
 # https://github.com/cytostack/openwolf) globally into appuser's asdf-managed
 # node, so `openwolf` is on PATH via the asdf shims already on PATH (below).
 #
-# Pinned, and deliberately NOT on `latest`: the 2.x line (2.0.1 current) has
-# bugs we hit in practice, so this holds at the last 1.x release. Bare
-# `npm install -g openwolf` would silently move this on every rebuild.
-# Revisit once 2.x is known good.
-ARG OPENWOLF_VERSION=1.0.4
+# Pinned, and deliberately NOT on `latest`: earlier 2.x releases (2.0.1) had
+# bugs we hit in practice, so this held at the last 1.x release until 2.4.1,
+# which is known good. Bare `npm install -g openwolf` would silently move
+# this on every rebuild.
+ARG OPENWOLF_VERSION=2.4.1
 RUN gosu appuser bash -lc "\
   export PATH=/home/appuser/.asdf/shims:\$PATH && \
   npm install -g openwolf@${OPENWOLF_VERSION} \
