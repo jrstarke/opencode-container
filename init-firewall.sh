@@ -49,7 +49,7 @@ iptables -A OUTPUT -o lo -j ACCEPT
 ipset create allowed-domains hash:net
 
 echo "Adding localhost and Docker networks..."
-ipset add allowed-domains 127.0.0.1
+ipset add allowed-domains 127.0.0.1 -exist
 
 echo "Fetching GitHub IP ranges..."
 set -x
@@ -69,7 +69,7 @@ while read -r cidr; do
         continue
     fi
     echo "Adding GitHub range $cidr"
-    ipset add allowed-domains "$cidr"
+    ipset add allowed-domains "$cidr" -exist
 done < <(echo "$gh_ranges" | jq -r '.web + .api + .git | unique | .[]')
 
 ALL_DOMAINS=""
@@ -117,7 +117,7 @@ for domain in $DOMAINS; do
             exit 1
         fi
         echo "Adding $ip for $domain"
-        ipset add allowed-domains "$ip"
+        ipset add allowed-domains "$ip" -exist
     done < <(echo "$ips")
 done
 
