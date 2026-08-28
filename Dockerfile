@@ -1,6 +1,7 @@
 FROM debian:stable-slim
 
-ARG TARGETARCH=arm64
+ARG TARGETARCH
+RUN : "${TARGETARCH:?TARGETARCH must be set explicitly (e.g. --build-arg TARGETARCH=arm64 or amd64) — the legacy Docker builder does not populate it automatically}"
 ARG OPENCODE_VERSION=1.17.13
 ARG ASDF_VERSION=0.19.0
 
